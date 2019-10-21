@@ -3,9 +3,22 @@ from re import match as regexmatch
 
 class authenticator:
 
-    def check_api_key(self, header):
-        if header['api-key']:
-            if regexmatch(r'^[A-Za-z0-9]{24}$', header['api-key']): # Validating key format and size
-                if execute_query().check_api_key(header['api-key']):
-                    return True
-        return False
+    def check_key(self, header):
+        try:
+            if header['x-api-key']:
+                #print(header['x-api-key'])
+                if regexmatch(r'^[A-Za-z0-9]{24}$', header['x-api-key']): # Validating key format and size
+                    print(header['x-api-key'])
+                    if execute_query().check_api_key(header['x-api-key']):
+                        return True
+            return False
+        except KeyError:
+            return False
+
+    def check_content_type(self, header):
+        try:
+            if header['Content-Type'] == 'application/json':
+                return True
+            return False
+        except KeyError:
+            return False
