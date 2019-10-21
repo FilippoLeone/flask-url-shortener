@@ -6,9 +6,7 @@ class authenticator:
     def check_key(self, header):
         try:
             if header['x-api-key']:
-                #print(header['x-api-key'])
                 if regexmatch(r'^[A-Za-z0-9]{24}$', header['x-api-key']): # Validating key format and size
-                    print(header['x-api-key'])
                     if execute_query().check_api_key(header['x-api-key']):
                         return True
             return False

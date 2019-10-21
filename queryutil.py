@@ -1,16 +1,20 @@
 from database import connector
 from datetime import datetime
-from utils import utils
+from utils import utils, logger
+import sqlite3
 
 class execute_query:
+    def __init__(self):
+        self.log = logger().log_error
+
     def get_url(self, identifier):
         try:
             connection = connector(permission='ro').connect()
             cursor = connection.cursor()
             cursor.execute("SELECT full_url FROM url_list WHERE shortlink=?", (identifier,))
             return cursor.fetchone()
-        except:
-            print('Error trying to get the requested record.')
+        except (sqlite3.DatabaseError, sqlite3.ProgrammingError, sqlite3.OperationalError) as err:
+            self.log(get_url=err)
             return False
         finally:
             connection.close()
@@ -21,8 +25,8 @@ class execute_query:
             cursor = connection.cursor()
             for row in cursor.execute("SELECT * FROM url_list"):
                 print(row)
-        except:
-            pass
+        except (sqlite3.DatabaseError, sqlite3.ProgrammingError, sqlite3.OperationalError) as err:
+            self.log(get_all_records=err)
         finally:
             connection.close()
 
@@ -31,13 +35,12 @@ class execute_query:
             connection = connector().connect()
             cursor = connection.cursor()
             shortlink = utils().generate_string()
-            #print(f"I've created an alias on: {shortlink}")
             cursor.execute("""
             INSERT INTO url_list VALUES (NULL, ?, ?, ?, ?)
             """, [(full_url), (shortlink), (datetime.now().strftime("%Y-%m-%d %H:%M:%S")), (expiration_date)])
             connection.commit()
-        except (KeyError, ValueError):
-            print('error')
+        except (sqlite3.DatabaseError, sqlite3.ProgrammingError, sqlite3.OperationalError) as err:
+            self.log(store_record=err)
         finally:
             connection.close()
             return f'https://shortlinks.airhelp.com/{shortlink}'
@@ -53,8 +56,8 @@ class execute_query:
             """, [(owner), (apikey), (permission)])
             connection.commit()
             return apikey
-        except:
-            pass
+        except (sqlite3.DatabaseError, sqlite3.ProgrammingError, sqlite3.OperationalError) as err:
+            self.log(store_record=err)
         finally:
             connection.close()
 
@@ -65,7 +68,8 @@ class execute_query:
             cursor.execute("SELECT key FROM api_keys WHERE key=?", (key,))
             ''.join(cursor.fetchone()) # Trying to join if execute above returns something
             return True
-        except TypeError:
+        except (sqlite3.DatabaseError, sqlite3.ProgrammingError, sqlite3.OperationalError, TypeError) as err:
+            self.log(key_check=err)
             return False
         finally:
             connection.close()
@@ -76,7 +80,7 @@ class execute_query:
             cursor = connection.cursor()
             cursor.execute("SELECT sql FROM sqlite_master")
             return ''.join(cursor.fetchone())
-        except:
-            pass
+        except (sqlite3.DatabaseError, sqlite3.ProgrammingError, sqlite3.OperationalError, TypeError) as err:
+            self.log(tablestruct=err)
         finally:
             connection.close()
