@@ -5,12 +5,12 @@ from utils import utils
 class execute_query:
     def get_url(self, identifier):
         try:
-            connection = connector(permission='r').connect()
+            connection = connector(permission='ro').connect()
             cursor = connection.cursor()
             cursor.execute("SELECT full_url FROM url_list WHERE shortlink=?", (identifier,))
             return cursor.fetchone()
-        except (ValueError):
-            print('error')
+        except:
+            print('Error trying to get the requested record.')
             return False
         finally:
             connection.close()

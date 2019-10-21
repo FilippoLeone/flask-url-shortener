@@ -8,14 +8,14 @@ class connector:
 
     def create_db(self):
         sqlite3.connect(f"file:{self.dbname}?mode=rwc", uri=True)
+        self.create_default_tables()
 
     def connect(self):
         try:
             return sqlite3.connect(f"file:{self.dbname}?mode={self.permission}", uri=True)
-        except sqlite3.OperationalError:
-            self.create_db()
-            self.create_default_tables()
-            
+        except sqlite3.OperationalError as e:
+            print(e)
+
     def create_url_table(self):
         # Creating url table
         try:
