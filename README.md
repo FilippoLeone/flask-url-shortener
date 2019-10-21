@@ -8,7 +8,7 @@
 
 ### How to use the url shortener
 - Api keys are created accessing the machine where the code is hosted and calling the queryutil class.
-- Hit `/create` with a PUT request, having `api-key : ABC1234` in your request header and `{'full_url' : 'url_that_I_want_to_shorten.com/?my_query_params=yes'}` the API will return you the shortlink alias for that URL.
+- Hit `/create` with a PUT request, having `api-key : ABC1234` in your request header and `{'full_url' : 'url_that_I_want_to_shorten.com/?my_query_params=yes'}` as body the API will return you the shortlink alias for that URL.
 
 ### Things to keep in mind
 - Why wasn't this developed by a real dev team? Because currently those teams don't have capacity for other projects. 
