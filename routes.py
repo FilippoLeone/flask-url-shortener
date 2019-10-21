@@ -25,13 +25,17 @@ class CreateURL(Resource):
     Class that manages the /create endpoint to create shortlinks
     """
     def put(self):
-        if authenticator().check_api_key(request.headers):
+        auth = authenticator()
+        if not auth.check_content_type(request.headers):
+            return { 'Error' : 'Please provide your request in the json format.' }, 401
+        if auth.check_key(request.headers):
             linkinfo = json.loads(request.data) 
-            if checkers.is_url(linkinfo["full_url"]): 
-                encoded_url = utils().encode_url(linkinfo["full_url"])
-                shortlink = execute_query().store_record(encoded_url)
-                return {'url' : f'{shortlink}'}, 200
-        return {'invalid-api-key' : 'Your key is invalid.'}, 401
+            if not checkers.is_url(linkinfo["full_url"]):
+                return {'Error' : 'Your URL is not valid.'} , 401
+            encoded_url = utils().encode_url(linkinfo["full_url"])
+            shortlink = execute_query().store_record(encoded_url)
+            return {'url' : f'{shortlink}'}, 201
+        return { 'Error' : 'Your key is invalid or missing.' }, 401
 
     def delete(self):
         pass
