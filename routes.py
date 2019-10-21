@@ -45,7 +45,7 @@ class GetURL(Resource):
     Class to redirect users to the full url
     """
     def get(self, link_id: str) -> any:
-        redirect_url = execute_query().get_record(link_id)
+        redirect_url = execute_query().get_url(link_id)
         if redirect_url:
             return redirect(utils().decode_url(redirect_url[0]), code=302)
         else:

@@ -3,9 +3,9 @@ from datetime import datetime
 from utils import utils
 
 class execute_query:
-    def get_record(self, identifier):
+    def get_url(self, identifier):
         try:
-            connection = connector().connect()
+            connection = connector(permission='r').connect()
             cursor = connection.cursor()
             cursor.execute("SELECT full_url FROM url_list WHERE shortlink=?", (identifier,))
             return cursor.fetchone()
