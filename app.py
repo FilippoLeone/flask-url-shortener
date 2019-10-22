@@ -5,6 +5,8 @@ from validator_collection import checkers
 import json
 from queryutil import execute_query
 from utils import utils
+import argparse
+from sys import argv
 
 app = Flask(__name__)
 api = Api(app)
@@ -55,4 +57,27 @@ api.add_resource(CreateURL, '/create')
 api.add_resource(GetURL, '/<string:link_id>')
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', debug=True, port=80, use_reloader=True)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--fresh-start", help="Runs DB fresh start creating the relative tables.", type=int)
+    parser.add_argument("--create-api-key", help="Starts the server, creates and returns an API key.", type=str)
+    parser.add_argument("--create-shortlink" , help="Creates a shortlink alias via commandline", type=str)
+    parser.add_argument("--server-start", help="Start the server", type=int)
+    parser.parse_args()
+    args = parser.parse_args()
+    if args.create_api_key:
+        if checkers.is_email(args.create_api_key):
+            print(execute_query().add_api_key(args.create_api_key))
+        else:
+            print('Please provide a valid email.')
+    if args.fresh_start and args.fresh_start == 1:
+        from database import connector
+        if connector().create_db():
+            print("Database and tables successfully created")
+    if args.create_shortlink:
+        if checkers.is_url(args.create_shortlink):
+            print(execute_query().store_record(args.create_shortlink))
+    if args.server_start and args.server_start == 1:
+        app.run(host='127.0.0.1', debug=True, port=80, use_reloader=True)
+    if not len(argv) > 1:
+        # No arguments were passed, switch to default behaviour
+        parser.print_help()

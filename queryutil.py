@@ -6,6 +6,7 @@ import sqlite3
 class execute_query:
     def __init__(self):
         self.log = logger().log_error
+        self.shortlinkURL = "https://shortlinks.airhelp.com"
 
     def get_url(self, identifier):
         try:
@@ -43,7 +44,7 @@ class execute_query:
             self.log(store_record=err)
         finally:
             connection.close()
-            return f'https://shortlinks.airhelp.com/{shortlink}'
+            return f'{self.shortlinkURL}/{shortlink}'
 
 
     def add_api_key(self, owner, permission='ALL'):

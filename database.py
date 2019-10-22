@@ -9,9 +9,14 @@ class connector:
         self.log = logger().log_error
 
     def create_db(self):
-        sqlite3.connect(f"file:{self.dbname}?mode=rwc", uri=True)
-        self.create_default_tables()
-
+        try:
+            sqlite3.connect(f"file:{self.dbname}?mode=rwc", uri=True)
+            self.create_default_tables()
+            return True
+        except sqlite3.OperationalError as e:
+            self.log(drystart_error=e)
+            return False
+            
     def connect(self):
         try:
             return sqlite3.connect(f"file:{self.dbname}?mode={self.permission}", uri=True)
