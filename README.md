@@ -20,13 +20,14 @@ optional arguments:
   --fresh-start FRESH_START
                         Runs DB fresh start creating the relative tables.
   --create-api-key CREATE_API_KEY
-                        Starts the server, creates and returns an API key.
+                        Creates and returns an API key, please provide your
+                        email as argument.
   --create-shortlink CREATE_SHORTLINK
-                        Creates a shortlink alias via commandline
+                        Creates a shortlink alias via commandline, provide a
+                        full URL as argument.
   --server-start SERVER_START
-                        Start the server
+                        Starts the server.
 ```
-
 
 
 - Hit `/create` with a PUT request, having `x-api-key : ABC1234` in your request header and `{'full_url' : 'url_that_I_want_to_shorten.com/?my_query_params=yes'}` as body the API will return you the shortlink alias for that URL.

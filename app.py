@@ -59,9 +59,9 @@ api.add_resource(GetURL, '/<string:link_id>')
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--fresh-start", help="Runs DB fresh start creating the relative tables.", type=int)
-    parser.add_argument("--create-api-key", help="Starts the server, creates and returns an API key.", type=str)
-    parser.add_argument("--create-shortlink" , help="Creates a shortlink alias via commandline", type=str)
-    parser.add_argument("--server-start", help="Start the server", type=int)
+    parser.add_argument("--create-api-key", help="Creates and returns an API key, please provide your email as argument.", type=str)
+    parser.add_argument("--create-shortlink" , help="Creates a shortlink alias via commandline, provide a full URL as argument.", type=str)
+    parser.add_argument("--server-start", help="Starts the server.", type=int)
     parser.parse_args()
     args = parser.parse_args()
     if args.create_api_key:
