@@ -11,6 +11,7 @@ from sys import argv
 app = Flask(__name__)
 api = Api(app)
 
+
 class ApiManager(Resource):
     """
     This class will manage api tasks like adding an api key
@@ -19,6 +20,7 @@ class ApiManager(Resource):
     """
     def get(self):
         pass
+
     def put(self):
         pass
 
@@ -29,16 +31,16 @@ class CreateURL(Resource):
     def put(self):
         auth = authenticator()
         if not auth.check_content_type(request.headers):
-            return { 'Error' : 'Please provide your request in the json format.' }, 401
+            return {'Error': 'Please provide your request in the json format.'}, 401
         if auth.check_key(request.headers):
             linkinfo = json.loads(request.data) 
             if not checkers.is_url(linkinfo["full_url"]):
-                return {'Error' : 'Your URL is not valid.'} , 401
+                return {'Error': 'Your URL is not valid.'} , 401
             encoded_url = utils().encode_url(linkinfo["full_url"])
             shortlink = execute_query().store_record(encoded_url)
             if shortlink:
-                return {'url' : f'{shortlink}'}, 201
-        return { 'Error' : 'Your key is invalid or missing.' }, 401
+                return {'url': f'{shortlink}'}, 201
+        return {'Error': 'Your key is invalid or missing.'}, 401
 
     def delete(self):
         pass
@@ -52,7 +54,8 @@ class GetURL(Resource):
         if redirect_url:
             return redirect(utils().decode_url(redirect_url[0]), code=302)
         else:
-            return {'Error' : 'The entered shortlink is not present in our system.'}, 404
+            return {'Error': 'The entered shortlink is not present in our system.'}, 404
+
 
 api.add_resource(CreateURL, '/create')
 api.add_resource(GetURL, '/<string:link_id>')

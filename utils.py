@@ -1,7 +1,6 @@
 import string
 import random
 import urllib.parse
-import re
 from datetime import datetime
 from os import getcwd
 

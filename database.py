@@ -1,6 +1,7 @@
 import sqlite3
 from utils import logger
 
+
 class connector:
     def __init__(self, *, permission='rw'):
         self.first_start = False
@@ -16,7 +17,7 @@ class connector:
         except sqlite3.OperationalError as e:
             self.log(drystart_error=e)
             return False
-            
+
     def connect(self):
         try:
             return sqlite3.connect(f"file:{self.dbname}?mode={self.permission}", uri=True)
