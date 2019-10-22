@@ -27,6 +27,9 @@ optional arguments:
                         full URL as argument.
   --server-start SERVER_START
                         Starts the server.
+
+- Example usage for your first start after cloning the repository:
+python app.py --fresh-start=1 --create-api-key=mybusinessemail@airhelp.com --server-start=1
 ```
 
 
