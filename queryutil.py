@@ -40,11 +40,12 @@ class execute_query:
             INSERT INTO url_list VALUES (NULL, ?, ?, ?, ?)
             """, [(full_url), (shortlink), (datetime.now().strftime("%Y-%m-%d %H:%M:%S")), (expiration_date)])
             connection.commit()
+            return f'{self.shortlinkURL}/{shortlink}'
         except (sqlite3.DatabaseError, sqlite3.ProgrammingError, sqlite3.OperationalError) as err:
             self.log(store_record=err)
+            return False
         finally:
             connection.close()
-            return f'{self.shortlinkURL}/{shortlink}'
 
 
     def add_api_key(self, owner, permission='ALL'):

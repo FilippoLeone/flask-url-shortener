@@ -36,7 +36,8 @@ class CreateURL(Resource):
                 return {'Error' : 'Your URL is not valid.'} , 401
             encoded_url = utils().encode_url(linkinfo["full_url"])
             shortlink = execute_query().store_record(encoded_url)
-            return {'url' : f'{shortlink}'}, 201
+            if shortlink:
+                return {'url' : f'{shortlink}'}, 201
         return { 'Error' : 'Your key is invalid or missing.' }, 401
 
     def delete(self):
