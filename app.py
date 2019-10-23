@@ -11,19 +11,6 @@ from sys import argv
 app = Flask(__name__)
 api = Api(app)
 
-
-class ApiManager(Resource):
-    """
-    This class will manage api tasks like adding an api key
-    or deleting/changing permission to a specific user. ]
-    @Todo: Filippo
-    """
-    def get(self):
-        pass
-
-    def put(self):
-        pass
-
 class CreateURL(Resource):
     """
     Class that manages the /create endpoint to create shortlinks
@@ -53,7 +40,9 @@ class GetURL(Resource):
     Class to redirect users to the full url
     """
     def get(self, link_id: str) -> any:
+        print(link_id)
         redirect_url = execute_query().get_url(link_id)
+        print(redirect_url)
         if redirect_url:
             return redirect(utils().decode_url(redirect_url[0]), code=302)
         else:
@@ -77,9 +66,8 @@ if __name__ == '__main__':
         else:
             print('Please provide a valid email.')
     if args.fresh_start and args.fresh_start == 1:
-        from database import connector
-        if connector().create_db():
-            print("Database and tables successfully created")
+        execute_query().create_default_tables()
+        print("Database and tables created.")
     if args.create_shortlink:
         if checkers.is_url(args.create_shortlink):
             print(execute_query().store_record(args.create_shortlink))

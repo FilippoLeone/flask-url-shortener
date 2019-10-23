@@ -9,80 +9,66 @@ class execute_query:
         self.shortlinkURL = "https://shortlinks.airhelp.com"
 
     def get_url(self, identifier):
-        try:
-            connection = connector(permission='ro').connect()
-            cursor = connection.cursor()
+        with connector(permission='ro') as conn:
+            cursor = conn.cursor()
             cursor.execute("SELECT full_url FROM url_list WHERE shortlink=?", (identifier,))
             return cursor.fetchone()
-        except (sqlite3.DatabaseError, sqlite3.ProgrammingError, sqlite3.OperationalError) as err:
-            self.log(get_url=err)
-            return False
-        finally:
-            connection.close()
 
     def get_all_records(self):
-        try:
-            connection = connector().connect()
-            cursor = connection.cursor()
-            for row in cursor.execute("SELECT * FROM url_list"):
+        with connector() as conn:
+            for row in conn.cursor().execute("SELECT * FROM url_list"):
                 print(row)
-        except (sqlite3.DatabaseError, sqlite3.ProgrammingError, sqlite3.OperationalError) as err:
-            self.log(get_all_records=err)
-        finally:
-            connection.close()
 
     def store_record(self, full_url, *, expiration_date=None):
-        try:
-            connection = connector().connect()
-            cursor = connection.cursor()
+        with connector() as conn:
             shortlink = utils().generate_string()
-            cursor.execute("""
+            conn.cursor().execute("""
             INSERT INTO url_list VALUES (NULL, ?, ?, ?, ?)
             """, [(full_url), (shortlink), (datetime.now().strftime("%Y-%m-%d %H:%M:%S")), (expiration_date)])
-            connection.commit()
+            conn.commit()
             return f'{self.shortlinkURL}/{shortlink}'
-        except (sqlite3.DatabaseError, sqlite3.ProgrammingError, sqlite3.OperationalError) as err:
-            self.log(store_record=err)
-            return False
-        finally:
-            connection.close()
-
 
     def add_api_key(self, owner, permission='ALL'):
-        try:
-            connection = connector().connect()
-            cursor = connection.cursor()
+        with connector() as conn:
             apikey = utils().generate_string(24)
-            cursor.execute("""
+            conn.cursor().execute("""
             INSERT INTO api_keys VALUES (NULL, ?, ?, ?)
             """, [(owner), (apikey), (permission)])
-            connection.commit()
+            conn.commit()
             return apikey
-        except (sqlite3.DatabaseError, sqlite3.ProgrammingError, sqlite3.OperationalError) as err:
-            self.log(store_record=err)
-        finally:
-            connection.close()
 
     def check_api_key(self, key):
-        try:
-            connection = connector().connect()
-            cursor = connection.cursor()
+        with connector() as conn:
+            cursor = conn.cursor()
             cursor.execute("SELECT key FROM api_keys WHERE key=?", (key,))
             ''.join(cursor.fetchone()) # Trying to join if execute above returns something
             return True
-        except (sqlite3.DatabaseError, sqlite3.ProgrammingError, sqlite3.OperationalError, TypeError) as err:
-            self.log(key_check=err)
-            return False
-        finally:
-            connection.close()
 
     def get_table_struct(self):
-        try:
-            connection = connector().connect()
-            cursor = connection.cursor()
+        with connector() as conn:
+            cursor = conn.cursor()
             cursor.execute("SELECT sql FROM sqlite_master")
             return ''.join(cursor.fetchone())
-        except (sqlite3.DatabaseError, sqlite3.ProgrammingError, sqlite3.OperationalError, TypeError) as err:
-            self.log(tablestruct=err)
-        finally:
-            connection.close()
+
+    def create_url_table(self):
+        # Creating url table
+        with connector() as conn:
+            conn.cursor().execute("""
+            CREATE TABLE url_list
+            (id INTEGER PRIMARY KEY AUTOINCREMENT, full_url TEXT, shortlink TEXT UNIQUE, creation_date TEXT, expiration_date TEXT)
+            """)
+            conn.commit()
+
+    def create_apikey_table(self):
+        with connector() as conn:
+            # Creating API key table
+            conn.cursor().execute("""
+            CREATE TABLE api_keys
+            (id INTEGER PRIMARY KEY AUTOINCREMENT, owner TEXT UNIQUE, key TEXT UNIQUE, permissions TEXT)
+            """)
+            conn.commit()
+
+    def create_default_tables(self):
+        connector().create_db()
+        self.create_url_table()
+        self.create_apikey_table()
