@@ -31,14 +31,14 @@ class CreateURL(Resource):
     def put(self):
         auth = authenticator()
         if not auth.check_content_type(request.headers):
-            return {'Error': 'Please provide your request in the json format.'}, 401
+            return {'Error': 'Please provide your request in the json format.'}, 400
         if auth.check_key(request.headers):
             try:
                 linkinfo = json.loads(request.data)
             except json.JSONDecodeError:
-                return {'Error': 'Your JSON is invalid.'}, 401
+                return {'Error': 'Your JSON is invalid.'}, 400
             if not checkers.is_url(linkinfo["full_url"]):
-                return {'Error': 'Your URL is not valid.'} , 401
+                return {'Error': 'Your URL is not valid.'} , 400
             encoded_url = utils().encode_url(linkinfo["full_url"])
             shortlink = execute_query().store_record(encoded_url)
             if shortlink:
