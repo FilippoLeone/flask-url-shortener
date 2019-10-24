@@ -3,7 +3,6 @@ from utils import logger
 
 class connector:
     def __init__(self, *, permission='rw'):
-        self.first_start = False
         self.dbname = 'shortlinks.db'
         self.permission = permission
         self.log = logger().log_error
@@ -27,7 +26,6 @@ class connector:
     def create_db(self):
         try:
             sqlite3.connect(f"file:{self.dbname}?mode=rwc", uri=True)
-            return True
         except sqlite3.OperationalError as e:
             self.log(drystart_error=e)
             return False
