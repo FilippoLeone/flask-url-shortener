@@ -31,7 +31,8 @@ class execute_query:
     def add_api_key(self, owner, permission='ALL'):
         with connector() as conn:
             apikey = utils().generate_string(24)
-            conn.cursor().execute("""
+            cursor = conn.cursor()
+            cursor.execute("""
             INSERT INTO api_keys VALUES (NULL, ?, ?, ?)
             """, [(owner), (apikey), (permission)])
             conn.commit()
@@ -53,7 +54,8 @@ class execute_query:
     def create_url_table(self):
         # Creating url table
         with connector() as conn:
-            conn.cursor().execute("""
+            cursor = conn.cursor()
+            cursor.execute("""
             CREATE TABLE url_list
             (id INTEGER PRIMARY KEY AUTOINCREMENT, full_url TEXT, shortlink TEXT UNIQUE, creation_date TEXT, expiration_date TEXT)
             """)
@@ -62,13 +64,15 @@ class execute_query:
     def create_apikey_table(self):
         with connector() as conn:
             # Creating API key table
-            conn.cursor().execute("""
+            cursor = conn.cursor()
+            cursor.execute("""
             CREATE TABLE api_keys
             (id INTEGER PRIMARY KEY AUTOINCREMENT, owner TEXT UNIQUE, key TEXT UNIQUE, permissions TEXT)
             """)
             conn.commit()
 
     def create_default_tables(self):
+        print("\n\nI am being called!\n\n")
         connector().create_db()
         self.create_url_table()
         self.create_apikey_table()
