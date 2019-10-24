@@ -60,14 +60,14 @@ if __name__ == '__main__':
     parser.add_argument("--server-start", help="Starts the server.", type=int)
     parser.parse_args()
     args = parser.parse_args()
+    if args.fresh_start and args.fresh_start == 1:
+        execute_query().create_default_tables()
+        print("Database and tables created.")
     if args.create_api_key:
         if checkers.is_email(args.create_api_key):
             print(execute_query().add_api_key(args.create_api_key))
         else:
             print('Please provide a valid email.')
-    if args.fresh_start and args.fresh_start == 1:
-        execute_query().create_default_tables()
-        print("Database and tables created.")
     if args.create_shortlink:
         if checkers.is_url(args.create_shortlink):
             print(execute_query().store_record(args.create_shortlink))
