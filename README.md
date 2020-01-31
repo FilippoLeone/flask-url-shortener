@@ -29,16 +29,13 @@ optional arguments:
                         Starts the server.
 
 - Example usage for your first start after cloning the repository:
-python app.py --fresh-start=1 --create-api-key=mybusinessemail@airhelp.com --server-start=1
+python app.py --fresh-start=1 --create-api-key=mybusinessemail@company.com --server-start=1
 ```
 
 
 - Hit `/create` with a PUT request, having `x-api-key : ABC1234` in your request header and `{'full_url' : 'url_that_I_want_to_shorten.com/?my_query_params=yes'}` as body the API will return you the shortlink alias for that URL.
 
 ### Things to keep in mind
-- Why wasn't this developed by a real dev team? Because currently those teams don't have capacity for other projects. 
 - Want to contribute? Submit a pull request.
 - Code is ugly, refactoring will come in the future if the scope expands.
-- Currently there is no authorization process in place as there is no need to it but if the scope of the tools expands I will write that part.
-- Why SQLite and not something more "production-ready"? SQLite for this use-case works just fine, we don't need to perform many write operations. 
 
