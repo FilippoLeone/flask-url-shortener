@@ -6,7 +6,7 @@ import sqlite3
 class execute_query:
     def __init__(self):
         self.log = logger().log_error
-        self.shortlinkURL = "https://shortlinks.airhelp.com"
+        self.shortlinkURL = "https://shortlinks.mywebsite.com"
 
     def get_url(self, identifier):
         with connector(permission='ro') as conn:
